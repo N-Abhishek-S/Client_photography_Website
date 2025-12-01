@@ -24,7 +24,6 @@ createRoot(document.getElementById("root")).render(
             <Route path="contact" element={<Contact />} />
             <Route path="services" element={<Services />} />
 <Route path="portfolio" element={<Owner3DPortfolio />} /> 
-
 <Route path="booknow" element={<BookNow />} /> 
             {/* Remove header and footer routes - they're part of App layout */}
           </Route>
