@@ -2,6 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { NavLink } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -161,12 +162,16 @@ const Services = () => {
             with creativity, technical excellence, and artistic vision.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <NavLink to="/booknow">
             <button className="bg-yellow-400 text-black px-8 py-4 rounded-full font-semibold hover:bg-yellow-300 transition-colors text-lg">
               Book a Service
             </button>
+            </NavLink>
+            <NavLink to="/portfolio">
             <button className="border-2 border-gray-600 px-8 py-4 rounded-full font-semibold hover:border-yellow-400 hover:text-yellow-400 transition-colors text-lg">
               View Portfolio
             </button>
+            </NavLink>
           </div>
         </div>
       </section>
@@ -313,11 +318,11 @@ const Services = () => {
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <span>📞</span>
-                  <span>+1 (555) 123-4567</span>
+                  <span>+91 9651791010</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <span>📧</span>
-                  <span>hello@gurustudio.com</span>
+                  <span>guruphotofilms@gmail.com</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <span>🕒</span>
@@ -339,9 +344,11 @@ const Services = () => {
             Let's work together to capture your unique story through our lens. Get in touch to discuss your project.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <NavLink to="/booknow">
             <button className="bg-black text-yellow-400 px-12 py-4 rounded-full text-lg font-semibold hover:bg-gray-900 transition-colors">
               Book Your Session
             </button>
+            </NavLink>
             <button className="border-2 border-black px-12 py-4 rounded-full text-lg font-semibold hover:bg-black hover:text-yellow-400 transition-colors">
               Get Free Quote
             </button>

@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { gsap } from "gsap";
+import LOGOGURUWHITE from "../assets/images/LOGOGURUWHITE.png";
 
 function Header() {
   const navRef = useRef(null);
@@ -8,87 +9,96 @@ function Header() {
   const buttonRef = useRef(null);
   const menuItemsRef = useRef([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const location = useLocation();
 
   useEffect(() => {
+    // Initial animations
     const tl = gsap.timeline();
     
-    // Animate logo with more dynamic effect
+    // Animate logo with smooth entrance
     tl.fromTo(
       logoRef.current,
       { 
-        x: -100, 
+        x: -50, 
         opacity: 0,
-        rotation: -10 
       },
       { 
         x: 0, 
         opacity: 1, 
-        rotation: 0,
-        duration: 1,
-        ease: "elastic.out(1, 0.8)"
+        duration: 0.8,
+        ease: "power3.out"
       }
     );
     
     // Animate menu items with staggered effect
-    tl.fromTo(
-      menuItemsRef.current,
-      { 
-        y: -30, 
-        opacity: 0,
-        scale: 0.8 
-      },
-      { 
-        y: 0, 
-        opacity: 1, 
-        scale: 1,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "back.out(1.7)"
-      },
-      "-=0.5"
-    );
+    if (menuItemsRef.current.length > 0) {
+      tl.fromTo(
+        menuItemsRef.current,
+        { 
+          y: -20, 
+          opacity: 0,
+        },
+        { 
+          y: 0, 
+          opacity: 1, 
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "back.out(1.5)"
+        },
+        "-=0.4"
+      );
+    }
     
-    // Animate button with bounce effect
+    // Animate button
     tl.fromTo(
       buttonRef.current,
       { 
         scale: 0, 
         opacity: 0,
-        rotation: -180 
       },
       { 
         scale: 1, 
         opacity: 1, 
-        rotation: 0,
-        duration: 0.8,
-        ease: "bounce.out"
+        duration: 0.5,
+        ease: "elastic.out(1, 0.5)"
       },
-      "-=0.3"
+      "-=0.2"
     );
 
-    // Add scroll effect
+    // Scroll effects
     const handleScroll = () => {
-      if (window.scrollY > 100) {
-        gsap.to(navRef.current, {
-          backgroundColor: "rgba(0, 0, 0, 0.95)",
-          backdropFilter: "blur(20px)",
-          padding: "1rem 0",
-          duration: 0.3,
-          ease: "power2.out"
-        });
-      } else {
-        gsap.to(navRef.current, {
-          backgroundColor: "rgba(0, 0, 0, 0.8)",
-          backdropFilter: "blur(10px)",
-          padding: "1.5rem 0",
-          duration: 0.3,
-          ease: "power2.out"
-        });
+      // Update scroll progress
+      const totalHeight = document.body.scrollHeight - window.innerHeight;
+      const progress = window.scrollY / totalHeight;
+      setScrollProgress(Math.min(progress, 1));
+
+      // Navbar background effect
+      if (navRef.current) {
+        if (window.scrollY > 50) {
+          gsap.to(navRef.current, {
+            backgroundColor: "rgba(0, 0, 0, 0.95)",
+            backdropFilter: "blur(20px)",
+            padding: "0.75rem 0",
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        } else {
+          gsap.to(navRef.current, {
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            backdropFilter: "blur(10px)",
+            padding: "1rem 0",
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        }
       }
     };
 
     window.addEventListener("scroll", handleScroll);
+    // Initial call
+    handleScroll();
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -105,108 +115,125 @@ function Header() {
     { name: "Contact", path: "/contact" }
   ];
 
-  // NavLink active class function
   const navLinkClass = ({ isActive }) => {
-    return `transition-colors duration-300 font-medium text-sm uppercase tracking-wider ${
-      isActive ? 'text-yellow-400' : 'text-gray-300 hover:text-white'
+    return `relative px-3 py-2 text-sm font-medium uppercase tracking-wider transition-colors duration-300 ${
+      isActive 
+        ? 'text-yellow-400' 
+        : 'text-gray-300 hover:text-white'
     }`;
   };
 
   return (
-    <div>
+    <>
       <nav
         ref={navRef}
-        className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 transition-all duration-300"
+        className="fixed top-0 left-0 right-0 z-50 w-full bg-black/80 backdrop-blur-lg border-b border-white/10 transition-all duration-300"
       >
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            {/* Logo with gradient effect */}
-            <NavLink 
-              to="/"
-              ref={logoRef}
-              className="flex items-center space-x-2 group"
-            >
-              <div className="w-3 h-3 bg-linear-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse group-hover:scale-150 transition-transform duration-300"></div>
-              <span className="text-2xl font-bold bg-linear-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent tracking-widest">
-                GURU
-              </span>
-              <span className="text-xs text-gray-400 font-light hidden sm:block group-hover:text-yellow-400 transition-colors duration-300">
-                STUDIO
-              </span>
-            </NavLink>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo - Fixed Section */}
+            <div ref={logoRef} className="flex items-center">
+              <NavLink 
+                to="/" 
+                className="flex items-center space-x-2 group focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 rounded-lg p-1"
+              >
+                <div className="relative">
+                  <img 
+                    src={LOGOGURUWHITE} 
+                    alt="Guru Studio Logo" 
+                    className="h-10 w-auto object-contain filter brightness-110 group-hover:brightness-125 transition-all duration-300"
+                    loading="eager"
+                  />
+                  {/* Glow effect on hover */}
+                  <div className="absolute inset-0 bg-yellow-400/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
+                </div>
+             
+              </NavLink>
+            </div>
 
-            {/* Desktop Menu */}
-            <ul className="hidden lg:flex items-center space-x-8">
+            {/* Desktop Navigation */}
+            <ul className="hidden lg:flex items-center space-x-1">
               {menuItems.map((item, index) => (
                 <li
                   key={item.name}
                   ref={el => menuItemsRef.current[index] = el}
-                  className="relative group"
+                  className="relative"
                 >
                   <NavLink
                     to={item.path}
                     className={navLinkClass}
                   >
                     {item.name}
-                  </NavLink>
-                  {/* Active indicator */}
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) => 
-                      `absolute bottom-0 left-0 w-0 h-0.5 bg-linear-to-r from-yellow-400 to-orange-500 group-hover:w-full transition-all duration-300 ${
-                        isActive ? 'w-full' : ''
-                      }`
-                    }
-                  >
-                    {/* Empty element for active state */}
-                    <span className="opacity-0">{item.name}</span>
+                    {/* Active/Hover underline */}
+                    <span className={`absolute bottom-0 left-3 right-3 h-0.5 bg-linear-to-r from-yellow-400 to-orange-500 transform origin-left transition-transform duration-300 ${
+                      location.pathname === item.path 
+                        ? 'scale-x-100' 
+                        : 'scale-x-0 group-hover:scale-x-100'
+                    }`}></span>
                   </NavLink>
                 </li>
               ))}
             </ul>
 
-            {/* CTA Button */}
+            {/* CTA Button & Mobile Menu Toggle */}
             <div className="flex items-center space-x-4">
               <NavLink 
                 to="/booknow"
                 ref={buttonRef}
                 className={({ isActive }) => 
-                  `relative group bg-linear-to-r from-yellow-400 to-orange-500 text-black px-6 py-3 rounded-full font-semibold hover:shadow-2xl hover:shadow-yellow-400/25 transition-all duration-300 transform hover:scale-105 ${
-                    isActive ? 'ring-2 ring-white ring-opacity-50' : ''
+                  `relative overflow-hidden group bg-linear-to-r from-yellow-400 to-orange-500 text-black px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 hover:shadow-lg hover:shadow-yellow-400/30 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 ${
+                    isActive ? 'ring-2 ring-white/30' : ''
                   }`
                 }
               >
                 <span className="relative z-10">Book Now</span>
-                <div className="absolute inset-0 bg-white rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
               </NavLink>
 
               {/* Mobile Menu Button */}
               <button 
                 onClick={toggleMenu}
-                className="lg:hidden flex flex-col space-y-1.5 w-6 h-6 justify-center items-center group"
+                className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center group focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 rounded-lg"
+                aria-label="Toggle menu"
               >
-                <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
-                <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}></span>
-                <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+                <span 
+                  className={`absolute w-6 h-0.5 bg-white transform transition-all duration-300 ease-out ${
+                    isMenuOpen ? 'rotate-45 translate-y-0' : '-translate-y-2'
+                  }`}
+                ></span>
+                <span 
+                  className={`absolute w-6 h-0.5 bg-white transition-all duration-300 ease-out ${
+                    isMenuOpen ? 'opacity-0 translate-x-4' : 'opacity-100'
+                  }`}
+                ></span>
+                <span 
+                  className={`absolute w-6 h-0.5 bg-white transform transition-all duration-300 ease-out ${
+                    isMenuOpen ? '-rotate-45 translate-y-0' : 'translate-y-2'
+                  }`}
+                ></span>
               </button>
             </div>
           </div>
 
           {/* Mobile Menu */}
-          <div className={`lg:hidden overflow-hidden transition-all duration-500 ease-in-out ${
-            isMenuOpen ? 'max-h-96 opacity-100 mt-6' : 'max-h-0 opacity-0'
-          }`}>
-            <div className="bg-black/50 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
-              <ul className="space-y-4">
-                {menuItems.map((item, index) => (
+          <div 
+            className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+              isMenuOpen 
+                ? 'max-h-96 opacity-100 mt-4' 
+                : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="bg-black/70 backdrop-blur-xl rounded-xl p-6 border border-white/10 shadow-2xl">
+              <ul className="space-y-3">
+                {menuItems.map((item) => (
                   <li key={item.name}>
                     <NavLink
                       to={item.path}
                       className={({ isActive }) => 
-                        `block transition-colors duration-300 font-medium py-2 border-b ${
+                        `block px-4 py-3 rounded-lg transition-all duration-300 font-medium text-sm uppercase tracking-wider ${
                           isActive
-                            ? 'text-yellow-400 border-yellow-400/50'
-                            : 'text-gray-300 hover:text-white border-white/5 hover:border-yellow-400/50'
+                            ? 'bg-linear-to-r from-yellow-400/20 to-orange-500/20 text-yellow-400 border-l-4 border-yellow-400'
+                            : 'text-gray-300 hover:text-white hover:bg-white/5'
                         }`
                       }
                       onClick={() => setIsMenuOpen(false)}
@@ -216,14 +243,20 @@ function Header() {
                   </li>
                 ))}
               </ul>
+              
+              {/* Mobile Contact Info */}
               <div className="mt-6 pt-6 border-t border-white/10">
-                <div className="flex flex-col space-y-3 text-sm text-gray-400">
-                  <div className="flex items-center space-x-2">
-                    <span>📞</span>
+                <div className="space-y-3 text-sm text-gray-400">
+                  <div className="flex items-center space-x-3 hover:text-white transition-colors duration-300">
+                    <div className="w-8 h-8 rounded-full bg-yellow-400/10 flex items-center justify-center">
+                      <span className="text-yellow-400">📞</span>
+                    </div>
                     <span>+1 (555) 123-4567</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <span>✉️</span>
+                  <div className="flex items-center space-x-3 hover:text-white transition-colors duration-300">
+                    <div className="w-8 h-8 rounded-full bg-yellow-400/10 flex items-center justify-center">
+                      <span className="text-yellow-400">✉️</span>
+                    </div>
                     <span>hello@gurustudio.com</span>
                   </div>
                 </div>
@@ -232,19 +265,19 @@ function Header() {
           </div>
         </div>
 
-        {/* Progress Bar */}
+        {/* Scroll Progress Bar */}
         <div 
-          className="absolute bottom-0 left-0 w-full h-0.5 bg-linear-to-r from-yellow-400 to-orange-500 transform scale-x-0 origin-left transition-transform duration-300"
+          className="absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-yellow-400 via-orange-500 to-red-500 transform origin-left transition-transform duration-200 ease-out"
           style={{ 
-            transform: `scaleX(${Math.min(window.scrollY / (document.body.scrollHeight - window.innerHeight), 1)})` 
+            transform: `scaleX(${scrollProgress})`,
+            width: '100%'
           }}
-        >
-        </div>
+        />
       </nav>
 
-      {/* Add some spacing for fixed header */}
-      <div className="h-20"></div>
-    </div>
+      {/* Spacer for fixed header */}
+      <div className="h-16"></div>
+    </>
   );
 }
 

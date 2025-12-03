@@ -2,7 +2,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Self2025 from '../assets/images/self2025.jpg';
+import { NavLink } from 'react-router-dom';
+import PImage from '../assets/images/PImage.jpg';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,14 +19,14 @@ const Owner3DPortfolio = () => {
 
   // Photographer Data
   const photographer = {
-    name: "Abhishek Nagargoje",
+    name: "Guru\u00A0 offical\u00A0Studio",
     title: "Professional Photographer & Visual Storyteller",
     location: "Parli City",
-    email: "nagargojeabhishek96@gmail.com",
-    phone: "+1 (123) 123-4567",
+    email: "guruphotofilms@gmail.com",
+    phone: "+91 9651791010",
     experience: "8+ Years",
     bio: "I'm a passionate photographer with over 8 years of experience capturing life's most precious moments. My journey began with a simple camera and a dream to tell stories through visuals. Today, I specialize in wedding, portrait, and commercial photography, bringing creativity and technical excellence to every project.",
-    profileImage: Self2025 ,
+    profileImage: PImage ,
     coverImage: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
     education: [
       "Bachelor of Fine Arts in Photography - New York University",
@@ -180,49 +181,160 @@ const Owner3DPortfolio = () => {
             className="w-full h-full object-cover opacity-20"
           />
         </div>
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
-            {/* Profile Image */}
-            <div className="lg:col-span-1 flex justify-center">
-              <div className="relative">
-                <img
-                  src={photographer.profileImage}
-                  alt={photographer.name}
-                  className="w-80 h-80 rounded-full object-cover border-4 border-yellow-400 shadow-2xl"
-                />
-                <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-black px-4 py-2 rounded-full font-semibold">
-                  📸 {photographer.experience}
-                </div>
-              </div>
-            </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-12 md:py-16">
+  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+    {/* Profile Image - Modern Design */}
+  <div className="lg:col-span-4 flex justify-start relative">
+  <div className="relative group w-full max-w-md lg:max-w-full">
 
-            {/* Profile Info */}
-            <div className="lg:col-span-2 text-center lg:text-left">
-              <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-linear-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                {photographer.name}
-              </h1>
-              <p className="text-2xl md:text-3xl text-gray-300 mb-6">{photographer.title}</p>
-              <p className="text-lg text-gray-400 mb-8 max-w-2xl">
-                {photographer.bio}
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <div className="flex items-center text-gray-300">
-                  <span className="mr-2">📍</span>
-                  {photographer.location}
-                </div>
-                <div className="flex items-center text-gray-300">
-                  <span className="mr-2">📧</span>
-                  {photographer.email}
-                </div>
-                <div className="flex items-center text-gray-300">
-                  <span className="mr-2">📞</span>
-                  {photographer.phone}
-                </div>
+    {/* Big Full-Size Image Container */}
+    <div className="
+        relative 
+        w-full 
+        h-[480px] sm:h-[520px] lg:h-[620px]   /* FULL SIZE HEIGHT */
+        rounded-[3rem] 
+        overflow-hidden
+        bg-linear-to-br from-blue-600 via-orange-500/10 to-transparent
+        shadow-2xl shadow-yellow-400/10 
+        p-1 
+        backdrop-blur-sm
+      ">
+
+      {/* Animated Border */}
+      <div className="
+          absolute inset-0 
+          rounded-[3rem] 
+          border-2 border-yellow-400/30 
+          animate-pulse 
+          group-hover:border-yellow-400/60 
+          transition-all duration-500
+        ">
+        <div className="
+            absolute inset-0 rounded-[3rem] 
+            bg-linear-to-br from-yellow-400/10 via-transparent to-orange-500/5 
+            blur-sm
+          "></div>
+      </div>
+
+      {/* Profile Image */}
+      <img
+        src={photographer.profileImage}
+        alt={photographer.name}
+        className="
+          w-full 
+          h-full 
+          object-cover 
+          rounded-[2.8rem]
+          transform 
+          group-hover:scale-105 
+          transition-transform duration-700 ease-out
+        "
+      />
+
+    </div>
+  </div>
+</div>
+
+
+    {/* Profile Info - Modern Typography */}
+    <div className="lg:col-span-8 text-center lg:text-left space-y-6 md:space-y-8">
+      {/* Badge */}
+      <div className="inline-flex items-center space-x-2 bg-black/40 backdrop-blur-sm 
+                     rounded-full px-4 py-2 border border-yellow-400/20">
+        <div className="w-2 h-2 rounded-full bg-linear-to-r from-yellow-400 to-orange-500 
+                       animate-pulse"></div>
+        <span className="text-xs font-medium tracking-widest uppercase text-yellow-400">
+          Professional Photographer
+        </span>
+      </div>
+      
+      {/* Name with Gradient */}
+      <div className="relative">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight">
+          <span className="bg-linear-to-r from-yellow-400 via-orange-500 to-pink-500 
+                         bg-clip-text text-transparent animate-gradient bg-size-[200%_auto]">
+            {photographer.name.split(' ').map((word, i) => (
+              <span key={i} className="inline-block">
+                {word}
+                {i < photographer.name.split(' ').length - 1 && ' '}
+              </span>
+            ))}
+          </span>
+        </h1>
+        
+        {/* Title */}
+        <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mt-4 font-light 
+                     tracking-wide max-w-2xl">
+          {photographer.title}
+        </p>
+      </div>
+      
+      {/* Bio */}
+      <div className="relative">
+        <div className="absolute -left-4 top-0 bottom-0 w-1 bg-linear-to-b 
+                       from-yellow-400 to-orange-500 rounded-full opacity-50"></div>
+        <p className="text-base sm:text-lg text-gray-400 leading-relaxed pl-6 
+                     max-w-2xl font-light">
+          {photographer.bio}
+        </p>
+      </div>
+      
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+        {[
+          { label: 'Projects', value: '500+', icon: '📸' },
+          { label: 'Clients', value: '150+', icon: '👥' },
+          { label: 'Experience', value: '8+ Years', icon: '⭐' },
+          { label: 'Awards', value: '25+', icon: '🏆' }
+        ].map((stat, index) => (
+          <div key={index} 
+               className="bg-black/30 backdrop-blur-sm rounded-xl p-4 border border-yellow-400/10 
+                         hover:border-yellow-400/30 transition-all duration-300 group/stat">
+            <div className="flex items-center space-x-3">
+              <div className="text-xl group-hover/stat:scale-110 transition-transform duration-300">
+                {stat.icon}
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">{stat.value}</div>
+                <div className="text-xs text-gray-400 uppercase tracking-wider">{stat.label}</div>
               </div>
             </div>
           </div>
-        </div>
+        ))}
+      </div>
+      
+      {/* Contact Button */}
+      <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
+        <NavLink 
+          to="/booknow"
+          className="group relative overflow-hidden rounded-full bg-linear-to-r 
+                     from-yellow-400 to-orange-500 px-8 py-4 font-bold text-black 
+                     hover:shadow-2xl hover:shadow-yellow-400/30 transition-all duration-300
+                     transform hover:-translate-y-1"
+        >
+          <span className="relative z-10 flex items-center space-x-2">
+            <span>Book Session</span>
+            <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+          </span>
+          <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 
+                         transition-opacity duration-300 rounded-full"></div>
+        </NavLink>
+        
+        <button className="group flex items-center space-x-2 text-gray-400 
+                          hover:text-white transition-colors duration-300">
+          <span className="text-sm font-medium">View Full Portfolio</span>
+          <span className="group-hover:translate-x-1 transition-transform duration-300">↗</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  {/* Decorative Background Elements */}
+  <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-yellow-400/5 
+                  to-orange-500/5 rounded-full blur-3xl -z-10"></div>
+  <div className="absolute bottom-0 left-0 w-96 h-96 bg-linear-to-tr from-orange-500/5 
+                  to-pink-500/5 rounded-full blur-3xl -z-10"></div>
+</div>
       </section>
 
       {/* About Section */}
@@ -369,9 +481,11 @@ const Owner3DPortfolio = () => {
             Ready to capture your special moments? I'd love to hear about your project and discuss how we can bring your vision to life.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <NavLink to="/booknow">
             <button className="bg-yellow-400 text-black px-8 py-4 rounded-full font-semibold hover:bg-yellow-300 transition-colors text-lg">
               Book a Session
             </button>
+            </NavLink>
             <button className="border-2 border-yellow-400 text-yellow-400 px-8 py-4 rounded-full font-semibold hover:bg-yellow-400 hover:text-black transition-colors text-lg">
               Download Portfolio PDF
             </button>

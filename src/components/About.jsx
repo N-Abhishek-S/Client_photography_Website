@@ -2,6 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { NavLink } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -266,18 +267,18 @@ const About = () => {
             Let's create something amazing together. Get in touch to discuss your project.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a 
-              href="/contact" 
+            <NavLink
+              to="/contact" 
               className="bg-black text-yellow-400 px-12 py-4 rounded-full text-lg font-semibold hover:bg-gray-900 transition-colors"
             >
               Start Your Project
-            </a>
-            <a 
-              href="/portfolio" 
+            </NavLink>
+            <NavLink
+              to="/portfolio"  
               className="border-2 border-black px-12 py-4 rounded-full text-lg font-semibold hover:bg-black hover:text-yellow-400 transition-colors"
             >
               View Our Work
-            </a>
+            </NavLink>
           </div>
         </div>
       </section>

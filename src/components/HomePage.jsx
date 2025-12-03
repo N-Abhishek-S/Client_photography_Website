@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap'; // default import
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { NavLink } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -115,12 +116,16 @@ const HomePage = () => {
             Capturing moments that tell your story. Professional photography and cinematography services.
           </p>
           <div className="space-x-4">
+            <NavLink to="/portfolio">
             <button className="bg-yellow-400 text-black px-8 py-3 rounded-full font-semibold hover:bg-yellow-300 transition-colors">
               View Portfolio
             </button>
+            </NavLink>
+            <NavLink to="/services">
             <button className="border-2 border-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-black transition-colors">
               Our Services
             </button>
+            </NavLink>
           </div>
         </div>
 
@@ -189,9 +194,11 @@ const HomePage = () => {
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-8">Ready to Create Something Amazing?</h2>
           <p className="text-xl mb-12 max-w-2xl mx-auto">Let's work together to capture your unique story through our lens.</p>
+          <NavLink to="/contact">
           <button className="bg-black text-white px-12 py-4 rounded-full text-lg font-semibold hover:bg-gray-800 transition-colors">
             Get In Touch
           </button>
+          </NavLink>
         </div>
       </section>
     </div>

@@ -653,12 +653,12 @@ const BookNow = () => {
               <div className="bg-black/10 rounded-xl p-6">
                 <div className="text-2xl mb-3">📞</div>
                 <h4 className="font-semibold mb-2">Call Us</h4>
-                <p>+1 (555) 123-4567</p>
+                <p>+91 9651791010</p>
               </div>
               <div className="bg-black/10 rounded-xl p-6">
                 <div className="text-2xl mb-3">📧</div>
                 <h4 className="font-semibold mb-2">Email Us</h4>
-                <p>bookings@gurustudio.com</p>
+                <p>guruphotofilms@gmail.com</p>
               </div>
               <div className="bg-black/10 rounded-xl p-6">
                 <div className="text-2xl mb-3">💬</div>

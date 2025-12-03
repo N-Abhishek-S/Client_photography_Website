@@ -2,6 +2,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { FaInstagram, FaYoutube, FaFacebook, FaXTwitter, FaLinkedin } from "react-icons/fa6";
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -82,19 +84,19 @@ const Contact = () => {
     {
       icon: '📧',
       title: 'Email Us',
-      details: 'hello@gurustudio.com',
+      details: 'guruphotofilms@gmail.com',
       subtitle: 'We\'ll reply within 24 hours'
     },
     {
       icon: '📞',
       title: 'Call Us',
-      details: '+1 (555) 123-4567',
+      details: '+91 9651791010',
       subtitle: 'Mon-Fri from 9am to 6pm'
     },
     {
       icon: '📍',
       title: 'Visit Studio',
-      details: '123 Studio Street, Creative City',
+      details: 'Guru Photofilms, Parmar Complex, Near Bus Stop, Parli Vaijnath, Dist. Beed, Pin Code-431515',
       subtitle: 'Book an appointment first'
     },
     {
@@ -105,12 +107,14 @@ const Contact = () => {
     }
   ];
 
-  const socialLinks = [
-    { name: 'Instagram', icon: '📷', url: '#', handle: '@gurustudio' },
-    { name: 'YouTube', icon: '🎥', url: '#', handle: 'Guru Studio Official' },
-    { name: 'Facebook', icon: '👥', url: '#', handle: 'Guru Photo Film' },
-    { name: 'Twitter', icon: '🐦', url: '#', handle: '@gurustudio' }
-  ];
+
+const socialLinks = [
+  { name: 'Instagram', icon: <FaInstagram color="#E4405F" />, url: 'https://www.instagram.com/guru_photofilms/' },
+  { name: 'YouTube', icon: <FaYoutube color="#FF0000" />, url: '#' },
+  { name: 'Facebook', icon: <FaFacebook color="#1877F2" />, url: 'https://www.facebook.com/guruphotofilms' },
+  { name: 'Twitter', icon: <FaXTwitter color="#000000" />, url: '#' },
+  { name: 'LinkedIn', icon: <FaLinkedin color="#0A66C2" />, url: '#' }
+];
 
   return (
     <div className="min-h-screen bg-gray-900 text-white pt-20">
@@ -234,7 +238,7 @@ const Contact = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {socialLinks.map((social, index) => (
                     <a
-                      key={index}
+                      key={social.name}
                       href={social.url}
                       className="flex items-center space-x-3 bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors duration-300 group"
                     >
@@ -282,8 +286,8 @@ const Contact = () => {
               <div className="text-center">
                 <div className="text-6xl mb-4">📍</div>
                 <h3 className="text-2xl font-bold mb-2">Guru Photo Film Studio</h3>
-                <p className="text-gray-300">123 Studio Street, Creative City</p>
-                <p className="text-gray-400">Ground Floor, Building A</p>
+                <p className="text-gray-300">Guru Photofilms, Parmar Complex, Near Bus Stop, Parli Vaijnath, Dist.</p>
+                <p className="text-gray-400"> Beed, Pin Code-431515</p>
               </div>
             </div>
             <div className="mt-6 text-gray-400">
