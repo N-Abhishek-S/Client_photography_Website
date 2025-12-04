@@ -5,12 +5,26 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { NavLink } from 'react-router-dom';
 import PImage from '../assets/images/PImage.jpg';
 
+// Swiper imports
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Thumbs, FreeMode } from 'swiper/modules';
+
+// Icons import
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/thumbs';
+import 'swiper/css/free-mode';
+
 gsap.registerPlugin(ScrollTrigger);
 
 const Owner3DPortfolio = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedProject, setSelectedProject] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [thumbsSwiper, setThumbsSwiper] = useState(null);
   
   const heroRef = useRef(null);
   const aboutRef = useRef(null);
@@ -41,6 +55,94 @@ const Owner3DPortfolio = () => {
     ]
   };
 
+  // Portfolio Projects with multiple images
+  const portfolioProjects = [
+    {
+      id: 1,
+      title: "Sarah & James Wedding",
+      category: "wedding",
+      description: "A beautiful outdoor wedding ceremony captured with cinematic elegance",
+      thumbnail: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: true,
+      images: [
+        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1520854221256-17463ccb8b9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+      ]
+    },
+    {
+      id: 2,
+      title: "Corporate Headshots",
+      category: "portrait",
+      description: "Professional headshots for TechStart Inc's executive team",
+      thumbnail: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: false,
+      images: [
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+      ]
+    },
+    {
+      id: 3,
+      title: "Luxury Watch Campaign",
+      category: "commercial",
+      description: "Product photography for ChronoLux Watches",
+      thumbnail: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: true,
+      images: [
+        "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1490367532201-b9bc1dc483f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+      ]
+    },
+    {
+      id: 4,
+      title: "Family Portraits",
+      category: "portrait",
+      description: "Lifestyle family portraits in Central Park",
+      thumbnail: "https://images.unsplash.com/photo-1682687221363-72518513620e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: false,
+      images: [
+        "https://images.unsplash.com/photo-1682687221363-72518513620e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1519677100203-7c61d0b01354?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+      ]
+    },
+    {
+      id: 5,
+      title: "Fashion Editorial",
+      category: "fashion",
+      description: "Fashion shoot for Vogue Magazine",
+      thumbnail: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: true,
+      images: [
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+      ]
+    },
+    {
+      id: 6,
+      title: "Product Photography",
+      category: "commercial",
+      description: "E-commerce product shots for fashion brand",
+      thumbnail: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: false,
+      images: [
+        "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1492684223066-dd23140edf6d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1490367532201-b9bc1dc483f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "https://images.unsplash.com/photo-1517230878791-4d28214057c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+      ]
+    }
+  ];
+
   // Skills and Specialties
   const skills = [
     {
@@ -64,41 +166,40 @@ const Owner3DPortfolio = () => {
     { category: "Lighting", items: ["Profoto B10 Plus", "Godox AD200 Pro", "Studio Softboxes"] }
   ];
 
-  // Portfolio Projects
-  const portfolioProjects = [
-    {
-      id: 1,
-      title: "Sarah & James Wedding",
-      category: "wedding",
-      description: "A beautiful outdoor wedding ceremony captured with cinematic elegance",
-      image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      featured: true
-    },
-    {
-      id: 2,
-      title: "Corporate Headshots",
-      category: "portrait",
-      description: "Professional headshots for TechStart Inc's executive team",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      featured: false
-    },
-    {
-      id: 3,
-      title: "Luxury Watch Campaign",
-      category: "commercial",
-      description: "Product photography for ChronoLux Watches",
-      image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      featured: true
-    },
-    {
-      id: 4,
-      title: "Family Portraits",
-      category: "portrait",
-      description: "Lifestyle family portraits in Central Park",
-      image: "https://images.unsplash.com/photo-1682687221363-72518513620e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      featured: false
+  const openLightbox = (project) => {
+    setSelectedProject(project);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeLightbox = () => {
+    setSelectedProject(null);
+    document.body.style.overflow = 'auto';
+  };
+
+  // ESC key and click outside to close
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape' && selectedProject) {
+        closeLightbox();
+      }
+    };
+
+    const handleClickOutside = (event) => {
+      if (selectedProject && event.target.classList.contains('bg-black/95')) {
+        closeLightbox();
+      }
+    };
+
+    if (selectedProject) {
+      document.addEventListener('keydown', handleEscKey);
+      document.addEventListener('click', handleClickOutside);
     }
-  ];
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [selectedProject]);
 
   useEffect(() => {
     // Hero animation
@@ -158,22 +259,10 @@ const Owner3DPortfolio = () => {
     );
   }, []);
 
-  const openProjectModal = (project) => {
-    setSelectedProject(project);
-    setIsModalOpen(true);
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeProjectModal = () => {
-    setIsModalOpen(false);
-    setSelectedProject(null);
-    document.body.style.overflow = 'unset';
-  };
-
   return (
     <div className="min-h-screen bg-gray-900 text-white pt-20">
       {/* Hero Section */}
-      <section ref={heroRef} className="relative py-20 bg-linear-to-br from-gray-900 to-black">
+      <section ref={heroRef} className="relative py-20 bg-gradient-to-br from-gray-900 to-black">
         <div className="absolute inset-0 overflow-hidden">
           <img
             src={photographer.coverImage}
@@ -182,159 +271,151 @@ const Owner3DPortfolio = () => {
           />
         </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-12 md:py-16">
-  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
-    {/* Profile Image - Modern Design */}
-  <div className="lg:col-span-4 flex justify-start relative">
-  <div className="relative group w-full max-w-md lg:max-w-full">
-
-    {/* Big Full-Size Image Container */}
-    <div className="
-        relative 
-        w-full 
-        h-[480px] sm:h-[520px] lg:h-[620px]   /* FULL SIZE HEIGHT */
-        rounded-[3rem] 
-        overflow-hidden
-        bg-linear-to-br from-blue-600 via-orange-500/10 to-transparent
-        shadow-2xl shadow-yellow-400/10 
-        p-1 
-        backdrop-blur-sm
-      ">
-
-      {/* Animated Border */}
-      <div className="
-          absolute inset-0 
-          rounded-[3rem] 
-          border-2 border-yellow-400/30 
-          animate-pulse 
-          group-hover:border-yellow-400/60 
-          transition-all duration-500
-        ">
-        <div className="
-            absolute inset-0 rounded-[3rem] 
-            bg-linear-to-br from-yellow-400/10 via-transparent to-orange-500/5 
-            blur-sm
-          "></div>
-      </div>
-
-      {/* Profile Image */}
-      <img
-        src={photographer.profileImage}
-        alt={photographer.name}
-        className="
-          w-full 
-          h-full 
-          object-cover 
-          rounded-[2.8rem]
-          transform 
-          group-hover:scale-105 
-          transition-transform duration-700 ease-out
-        "
-      />
-
-    </div>
-  </div>
-</div>
-
-
-    {/* Profile Info - Modern Typography */}
-    <div className="lg:col-span-8 text-center lg:text-left space-y-6 md:space-y-8">
-      {/* Badge */}
-      <div className="inline-flex items-center space-x-2 bg-black/40 backdrop-blur-sm 
-                     rounded-full px-4 py-2 border border-yellow-400/20">
-        <div className="w-2 h-2 rounded-full bg-linear-to-r from-yellow-400 to-orange-500 
-                       animate-pulse"></div>
-        <span className="text-xs font-medium tracking-widest uppercase text-yellow-400">
-          Professional Photographer
-        </span>
-      </div>
-      
-      {/* Name with Gradient */}
-      <div className="relative">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight">
-          <span className="bg-linear-to-r from-yellow-400 via-orange-500 to-pink-500 
-                         bg-clip-text text-transparent animate-gradient bg-size-[200%_auto]">
-            {photographer.name.split(' ').map((word, i) => (
-              <span key={i} className="inline-block">
-                {word}
-                {i < photographer.name.split(' ').length - 1 && ' '}
-              </span>
-            ))}
-          </span>
-        </h1>
-        
-        {/* Title */}
-        <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mt-4 font-light 
-                     tracking-wide max-w-2xl">
-          {photographer.title}
-        </p>
-      </div>
-      
-      {/* Bio */}
-      <div className="relative">
-        <div className="absolute -left-4 top-0 bottom-0 w-1 bg-linear-to-b 
-                       from-yellow-400 to-orange-500 rounded-full opacity-50"></div>
-        <p className="text-base sm:text-lg text-gray-400 leading-relaxed pl-6 
-                     max-w-2xl font-light">
-          {photographer.bio}
-        </p>
-      </div>
-      
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
-        {[
-          { label: 'Projects', value: '500+', icon: '📸' },
-          { label: 'Clients', value: '150+', icon: '👥' },
-          { label: 'Experience', value: '8+ Years', icon: '⭐' },
-          { label: 'Awards', value: '25+', icon: '🏆' }
-        ].map((stat, index) => (
-          <div key={index} 
-               className="bg-black/30 backdrop-blur-sm rounded-xl p-4 border border-yellow-400/10 
-                         hover:border-yellow-400/30 transition-all duration-300 group/stat">
-            <div className="flex items-center space-x-3">
-              <div className="text-xl group-hover/stat:scale-110 transition-transform duration-300">
-                {stat.icon}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+            {/* Profile Image */}
+            <div className="lg:col-span-4 flex justify-start relative">
+              <div className="relative group w-full max-w-md lg:max-w-full">
+                <div className="
+                    relative 
+                    w-full 
+                    h-[480px] sm:h-[520px] lg:h-[620px]
+                    rounded-[3rem] 
+                    overflow-hidden
+                    bg-gradient-to-br from-blue-600 via-orange-500/10 to-transparent
+                    shadow-2xl shadow-yellow-400/10 
+                    p-1 
+                    backdrop-blur-sm
+                  ">
+                  <div className="
+                      absolute inset-0 
+                      rounded-[3rem] 
+                      border-2 border-yellow-400/30 
+                      animate-pulse 
+                      group-hover:border-yellow-400/60 
+                      transition-all duration-500
+                    ">
+                    <div className="
+                        absolute inset-0 rounded-[3rem] 
+                        bg-gradient-to-br from-yellow-400/10 via-transparent to-orange-500/5 
+                        blur-sm
+                      "></div>
+                  </div>
+                  <img
+                    src={photographer.profileImage}
+                    alt={photographer.name}
+                    className="
+                      w-full 
+                      h-full 
+                      object-cover 
+                      rounded-[2.8rem]
+                      transform 
+                      group-hover:scale-105 
+                      transition-transform duration-700 ease-out
+                    "
+                  />
+                </div>
               </div>
-              <div>
-                <div className="text-2xl font-bold text-white">{stat.value}</div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">{stat.label}</div>
+            </div>
+
+            {/* Profile Info */}
+            <div className="lg:col-span-8 text-center lg:text-left space-y-6 md:space-y-8">
+              {/* Badge */}
+              <div className="inline-flex items-center space-x-2 bg-black/40 backdrop-blur-sm 
+                           rounded-full px-4 py-2 border border-yellow-400/20">
+                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 
+                             animate-pulse"></div>
+                <span className="text-xs font-medium tracking-widest uppercase text-yellow-400">
+                  Professional Photographer
+                </span>
+              </div>
+              
+              {/* Name with Gradient */}
+              <div className="relative">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight">
+                  <span className="bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 
+                               bg-clip-text text-transparent animate-gradient bg-size-[200%_auto]">
+                    {photographer.name.split(' ').map((word, i) => (
+                      <span key={i} className="inline-block">
+                        {word}
+                        {i < photographer.name.split(' ').length - 1 && ' '}
+                      </span>
+                    ))}
+                  </span>
+                </h1>
+                
+                {/* Title */}
+                <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mt-4 font-light 
+                           tracking-wide max-w-2xl">
+                  {photographer.title}
+                </p>
+              </div>
+              
+              {/* Bio */}
+              <div className="relative">
+                <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b 
+                             from-yellow-400 to-orange-500 rounded-full opacity-50"></div>
+                <p className="text-base sm:text-lg text-gray-400 leading-relaxed pl-6 
+                           max-w-2xl font-light">
+                  {photographer.bio}
+                </p>
+              </div>
+              
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+                {[
+                  { label: 'Projects', value: '500+', icon: '📸' },
+                  { label: 'Clients', value: '150+', icon: '👥' },
+                  { label: 'Experience', value: '8+ Years', icon: '⭐' },
+                  { label: 'Awards', value: '25+', icon: '🏆' }
+                ].map((stat, index) => (
+                  <div key={index} 
+                     className="bg-black/30 backdrop-blur-sm rounded-xl p-4 border border-yellow-400/10 
+                             hover:border-yellow-400/30 transition-all duration-300 group/stat">
+                    <div className="flex items-center space-x-3">
+                      <div className="text-xl group-hover/stat:scale-110 transition-transform duration-300">
+                        {stat.icon}
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-white">{stat.value}</div>
+                        <div className="text-xs text-gray-400 uppercase tracking-wider">{stat.label}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Contact Button */}
+              <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
+                <NavLink 
+                  to="/booknow"
+                  className="group relative overflow-hidden rounded-full bg-gradient-to-r 
+                           from-yellow-400 to-orange-500 px-8 py-4 font-bold text-black 
+                           hover:shadow-2xl hover:shadow-yellow-400/30 transition-all duration-300
+                           transform hover:-translate-y-1"
+                >
+                  <span className="relative z-10 flex items-center space-x-2">
+                    <span>Book Session</span>
+                    <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                  </span>
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 
+                               transition-opacity duration-300 rounded-full"></div>
+                </NavLink>
+                
+                <button className="group flex items-center space-x-2 text-gray-400 
+                                hover:text-white transition-colors duration-300">
+                  <span className="text-sm font-medium">View Full Portfolio</span>
+                  <span className="group-hover:translate-x-1 transition-transform duration-300">↗</span>
+                </button>
               </div>
             </div>
           </div>
-        ))}
-      </div>
-      
-      {/* Contact Button */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
-        <NavLink 
-          to="/booknow"
-          className="group relative overflow-hidden rounded-full bg-linear-to-r 
-                     from-yellow-400 to-orange-500 px-8 py-4 font-bold text-black 
-                     hover:shadow-2xl hover:shadow-yellow-400/30 transition-all duration-300
-                     transform hover:-translate-y-1"
-        >
-          <span className="relative z-10 flex items-center space-x-2">
-            <span>Book Session</span>
-            <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-          </span>
-          <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 
-                         transition-opacity duration-300 rounded-full"></div>
-        </NavLink>
-        
-        <button className="group flex items-center space-x-2 text-gray-400 
-                          hover:text-white transition-colors duration-300">
-          <span className="text-sm font-medium">View Full Portfolio</span>
-          <span className="group-hover:translate-x-1 transition-transform duration-300">↗</span>
-        </button>
-      </div>
-    </div>
-  </div>
-  
-  {/* Decorative Background Elements */}
-  <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-yellow-400/5 
-                  to-orange-500/5 rounded-full blur-3xl -z-10"></div>
-  <div className="absolute bottom-0 left-0 w-96 h-96 bg-linear-to-tr from-orange-500/5 
-                  to-pink-500/5 rounded-full blur-3xl -z-10"></div>
-</div>
+          
+          {/* Decorative Background Elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-yellow-400/5 
+                        to-orange-500/5 rounded-full blur-3xl -z-10"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-orange-500/5 
+                        to-pink-500/5 rounded-full blur-3xl -z-10"></div>
+        </div>
       </section>
 
       {/* About Section */}
@@ -413,7 +494,7 @@ const Owner3DPortfolio = () => {
         </div>
       </section>
 
-      {/* Portfolio Projects Section */}
+      {/* Portfolio Projects Section - UPDATED with lightbox */}
       <section className="projects-section py-20 bg-gray-800">
         <div className="container mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-4">My Work</h2>
@@ -421,39 +502,99 @@ const Owner3DPortfolio = () => {
             A selection of my favorite projects that showcase my style and expertise
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {portfolioProjects.map((project, index) => (
-              <div
-                key={project.id}
-                ref={el => projectsRef.current[index] = el}
-                className="group relative bg-gray-700 rounded-2xl overflow-hidden hover:transform hover:scale-105 transition-all duration-500 cursor-pointer"
-                onClick={() => openProjectModal(project)}
+          {/* Filter Buttons */}
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {['all', 'wedding', 'portrait', 'commercial', 'fashion'].map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                  activeFilter === filter
+                    ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-black'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
               >
-                {project.featured && (
-                  <div className="absolute top-4 left-4 z-10 bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-semibold">
-                    Featured
-                  </div>
-                )}
-                
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-2xl mb-2">👁️</div>
-                    <div className="text-white font-semibold">View Project</div>
-                  </div>
-                </div>
-
-                <div className="p-4">
-                  <h3 className="text-lg font-bold text-white mb-2">{project.title}</h3>
-                  <p className="text-gray-400 text-sm">{project.description}</p>
-                </div>
-              </div>
+                {filter.charAt(0).toUpperCase() + filter.slice(1)}
+              </button>
             ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {portfolioProjects
+              .filter(project => activeFilter === 'all' || project.category === activeFilter)
+              .map((project, index) => (
+                <div
+                  key={project.id}
+                  ref={el => projectsRef.current[index] = el}
+                  onClick={() => openLightbox(project)}
+                  className="group relative overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 hover:scale-[1.02]"
+                >
+                  {project.featured && (
+                    <div className="absolute top-6 left-6 z-10 bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                      Featured
+                    </div>
+                  )}
+                  
+                  {/* Main Image */}
+                  <div className="relative h-80 overflow-hidden">
+                    <img
+                      src={project.thumbnail}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    
+                    {/* Project Info */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                      <span className="inline-block px-4 py-1 bg-black/60 backdrop-blur-sm text-yellow-400 text-sm font-semibold rounded-full mb-3">
+                        {project.category.toUpperCase()}
+                      </span>
+                      <h3 className="text-white text-xl font-bold mb-2">{project.title}</h3>
+                      <p className="text-gray-300 text-sm">{project.description}</p>
+                      
+                      {/* Image Count */}
+                      <div className="flex items-center mt-4">
+                        <div className="flex -space-x-2">
+                          {project.images.slice(0, 3).map((img, idx) => (
+                            <div key={idx} className="w-8 h-8 rounded-full border-2 border-black overflow-hidden">
+                              <img 
+                                src={img.replace('w=1920', 'w=100')} 
+                                alt="" 
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ))}
+                          {project.images.length > 3 && (
+                            <div className="w-8 h-8 rounded-full bg-black/80 border-2 border-black flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">
+                                +{project.images.length - 3}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-gray-400 text-sm ml-3">
+                          {project.images.length} photos
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto">
+                          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                          </svg>
+                        </div>
+                        <p className="text-white text-lg font-semibold">View Gallery</p>
+                        <p className="text-gray-300 text-sm">Click to explore</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
       </section>
@@ -461,7 +602,7 @@ const Owner3DPortfolio = () => {
       {/* Philosophy Section */}
       <section className="py-20">
         <div className="container mx-auto px-6">
-          <div className="bg-linear-to-r from-yellow-400 to-orange-500 rounded-3xl p-8 md:p-12 text-black text-center">
+          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-3xl p-8 md:p-12 text-black text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">My Photography Philosophy</h2>
             <p className="text-lg md:text-xl mb-8 max-w-4xl mx-auto">
               "I believe every photograph should tell a story and evoke emotion. My approach combines technical expertise with artistic vision to create images that are not just seen, but felt. Whether it's a wedding, portrait, or commercial project, I strive to capture authentic moments that will be cherished for generations."
@@ -482,43 +623,99 @@ const Owner3DPortfolio = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <NavLink to="/booknow">
-            <button className="bg-yellow-400 text-black px-8 py-4 rounded-full font-semibold hover:bg-yellow-300 transition-colors text-lg">
-              Book a Session
-            </button>
+              <button className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-8 py-4 rounded-full font-semibold hover:shadow-2xl hover:shadow-yellow-400/30 transition-all duration-300 text-lg transform hover:-translate-y-1">
+                Book a Session
+              </button>
             </NavLink>
-            <button className="border-2 border-yellow-400 text-yellow-400 px-8 py-4 rounded-full font-semibold hover:bg-yellow-400 hover:text-black transition-colors text-lg">
+            <button className="border-2 border-yellow-400 text-yellow-400 px-8 py-4 rounded-full font-semibold hover:bg-yellow-400 hover:text-black transition-all duration-300 text-lg">
               Download Portfolio PDF
             </button>
           </div>
         </div>
       </section>
 
-      {/* Project Modal */}
-      {isModalOpen && selectedProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
-          <div className="bg-gray-800 rounded-2xl max-w-2xl w-full">
-            <div className="relative">
-              <img
-                src={selectedProject.image}
-                alt={selectedProject.title}
-                className="w-full h-64 object-cover rounded-t-2xl"
-              />
-              <button
-                onClick={closeProjectModal}
-                className="absolute top-4 right-4 bg-black/80 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black transition-colors"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className="p-6">
-              <h3 className="text-2xl font-bold text-white mb-2">{selectedProject.title}</h3>
-              <p className="text-gray-300 mb-4">{selectedProject.description}</p>
-              <button className="w-full bg-yellow-400 text-black py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-colors">
-                Book Similar Project
-              </button>
-            </div>
+      {/* Swiper Lightbox Modal - UPDATED */}
+      {selectedProject && (
+        <div className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-4">
+          {/* Simple Close Button */}
+          <button
+            onClick={closeLightbox}
+            className="fixed top-8 right-8 z-50 bg-red-600 hover:bg-red-700 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition-colors duration-300"
+          >
+            ✕
+          </button>
+
+          {/* Project Info */}
+          <div className="text-center mb-8 max-w-3xl">
+            <h3 className="text-3xl md:text-4xl font-bold text-white mb-2">
+              {selectedProject.title}
+            </h3>
+            <p className="text-gray-300 text-lg">{selectedProject.description}</p>
           </div>
+
+          {/* Main Swiper Container */}
+          <div className="w-full max-w-6xl">
+            <Swiper
+              modules={[Navigation, Pagination, Thumbs]}
+              spaceBetween={10}
+              navigation
+              pagination={{ clickable: true }}
+              thumbs={{ swiper: thumbsSwiper }}
+              className="rounded-xl"
+            >
+              {selectedProject.images.map((image, index) => (
+                <SwiperSlide key={index}>
+                  <div className="aspect-video bg-black flex items-center justify-center">
+                    <img
+                      src={image}
+                      alt={`${selectedProject.title} - ${index + 1}`}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+
+          {/* Image Counter */}
+          <div className="text-center mt-6">
+            <p className="text-gray-400">
+              <span className="text-yellow-400 font-semibold">1</span> / {selectedProject.images.length} images
+            </p>
+          </div>
+
+          {/* Thumbnail Swiper */}
+          <div className="w-full max-w-3xl mt-6">
+            <Swiper
+              onSwiper={setThumbsSwiper}
+              spaceBetween={8}
+              slidesPerView={4}
+              freeMode={true}
+              watchSlidesProgress={true}
+              modules={[FreeMode, Thumbs]}
+              className="thumbnail-swiper"
+            >
+              {selectedProject.images.map((image, index) => (
+                <SwiperSlide key={index}>
+                  <div className="aspect-video rounded-lg overflow-hidden cursor-pointer opacity-50 hover:opacity-100 transition-opacity">
+                    <img
+                      src={image.replace('w=1920', 'w=400')}
+                      alt={`Thumbnail ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+
+          {/* Close Button at Bottom */}
+          <button
+            onClick={closeLightbox}
+            className="mt-8 px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full font-semibold transition-colors duration-300"
+          >
+            Close Gallery
+          </button>
         </div>
       )}
     </div>
