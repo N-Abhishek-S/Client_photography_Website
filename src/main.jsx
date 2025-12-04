@@ -1,37 +1,37 @@
 // src/main.jsx
-import { StrictMode } from "react";
+import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { HashRouter, Route, Routes } from "react-router-dom";
 
 import "./index.css";
+import LoadingSpinner from "./components/LoadingSpinner.jsx";
 
-import App from "./App.jsx";
-import HomePage from "./components/HomePage.jsx";
-import CourseSalesPage from "./components/CourseSalesPage.jsx";
-import About from "./components/About.jsx";
-import Contact from "./components/Contact.jsx";
-import Services from "./components/Services.jsx";
-import Owner3DPortfolio from "./components/Owner3DPortfolio.jsx";
-import BookNow from "./components/BookNow.jsx";
+// Lazy load components
+const App = lazy(() => import("./App.jsx"));
+const HomePage = lazy(() => import("./components/HomePage.jsx"));
+const CourseSalesPage = lazy(() => import("./components/CourseSalesPage.jsx"));
+const About = lazy(() => import("./components/About.jsx"));
+const Contact = lazy(() => import("./components/Contact.jsx"));
+const Services = lazy(() => import("./components/Services.jsx"));
+const Owner3DPortfolio = lazy(() => import("./components/Owner3DPortfolio.jsx"));
+const BookNow = lazy(() => import("./components/BookNow.jsx"));
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <HashRouter>
-      <Routes>
-        {/* App is the main layout (Header, Footer, Outlet) */}
-        <Route path="/" element={<App />}>
-          <Route index element={<HomePage />} />
-          <Route path="courses" element={<CourseSalesPage />} />
-          <Route path="about" element={<About />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="services" element={<Services />} />
-          <Route path="portfolio" element={<Owner3DPortfolio />} />
-          <Route path="booknow" element={<BookNow />} />
-        </Route>
-
-        {/* Optional: 404 page */}
-        {/* <Route path="*" element={<NotFound />} /> */}
-      </Routes>
-    </HashRouter>
+    <Suspense fallback={<LoadingSpinner />}>
+      <HashRouter>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route index element={<HomePage />} />
+            <Route path="courses" element={<CourseSalesPage />} />
+            <Route path="about" element={<About />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="services" element={<Services />} />
+            <Route path="portfolio" element={<Owner3DPortfolio />} />
+            <Route path="booknow" element={<BookNow />} />
+          </Route>
+        </Routes>
+      </HashRouter>
+    </Suspense>
   </StrictMode>
 );
