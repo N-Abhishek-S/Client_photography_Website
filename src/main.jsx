@@ -13,8 +13,11 @@ const CourseSalesPage = lazy(() => import("./components/CourseSalesPage.jsx"));
 const About = lazy(() => import("./components/About.jsx"));
 const Contact = lazy(() => import("./components/Contact.jsx"));
 const Services = lazy(() => import("./components/Services.jsx"));
-const Owner3DPortfolio = lazy(() => import("./components/Owner3DPortfolio.jsx"));
+const Owner3DPortfolio = lazy(() =>
+  import("./components/Owner3DPortfolio.jsx")
+);
 const BookNow = lazy(() => import("./components/BookNow.jsx"));
+const PSDFilesPage = lazy(() => import("./components/PSDFilesPage.jsx"));
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -29,6 +32,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="services" element={<Services />} />
             <Route path="portfolio" element={<Owner3DPortfolio />} />
             <Route path="booknow" element={<BookNow />} />
+            <Route path="psdfile" element={<PSDFilesPage />} />
           </Route>
         </Routes>
       </HashRouter>

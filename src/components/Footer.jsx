@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { NavLink } from "react-router-dom";
+import LOGOGURUWHITE from "../assets/images/LOGOGURUWHITE.png";
 
 
 import {
@@ -153,7 +154,7 @@ const socialLinks = [
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="w-3 h-3 bg-linear-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse"></div>
                   <h3 className="text-3xl font-bold bg-linear-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                    GURU
+                   <img src={LOGOGURUWHITE} className="h-20 w-auto object-contain filter brightness-110 group-hover:brightness-125 transition-all duration-300" />
                   </h3>
                 </div>
                 <p className="text-gray-400 text-lg mb-6 max-w-md">

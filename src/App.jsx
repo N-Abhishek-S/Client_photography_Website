@@ -3,8 +3,8 @@ import React, { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop"; // Add this
 
-// Create a mini loading component for nested routes
 const NestedLoading = () => (
   <div className="flex-1 flex items-center justify-center min-h-[60vh]">
     <div className="text-center">
@@ -17,6 +17,7 @@ const NestedLoading = () => (
 function App() {
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
+      <ScrollToTop /> {/* Add this */}
       <Header />
       <main className="flex-1">
         <Suspense fallback={<NestedLoading />}>
