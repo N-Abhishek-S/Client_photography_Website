@@ -186,7 +186,7 @@ const socialLinks = [
           <div ref={(el) => (columnsRef.current[0] = el)}>
   <h4 className="font-semibold text-white mb-6 text-lg relative inline-block">
     Quick Links
-    <div className="absolute bottom-0 left-0 w-1/2 h-0.5 bg-gradient-to-r from-yellow-400 to-orange-500"></div>
+    <div className="absolute bottom-0 left-0 w-1/2 h-0.5 bg-linear-to-r from-yellow-400 to-orange-500"></div>
   </h4>
 
   <ul className="space-y-3">
