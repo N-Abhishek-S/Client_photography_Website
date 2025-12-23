@@ -12,7 +12,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Thumbs, FreeMode } from 'swiper/modules';
 
 // Icons import
-import { X, ChevronLeft, ChevronRight, Award, Calendar, School } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Award, Calendar, School, Loader2 } from 'lucide-react';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -20,6 +20,9 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/thumbs';
 import 'swiper/css/free-mode';
+
+// Import Appwrite function to get portfolio projects
+import { getPortfolioServices  } from '../appwrite';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,12 +32,108 @@ const Owner3DPortfolio = () => {
   const [selectedCertificate, setSelectedCertificate] = useState(null);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [certThumbsSwiper, setCertThumbsSwiper] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   const heroRef = useRef(null);
   const aboutRef = useRef(null);
   const skillsRef = useRef(null);
   const certificatesRef = useRef(null);
   const projectsRef = useRef([]);
+
+  // Fetch portfolio projects from Appwrite
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        console.log('Fetching portfolio projects from Appwrite...');
+        const projectsData = await getPortfolioServices (); // You'll need to create this function
+        console.log('Projects fetched:', projectsData);
+        setProjects(projectsData);
+      } catch (err) {
+        console.error('Error fetching projects:', err);
+        setError(err.message || 'Failed to fetch projects');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  // Get image URL for portfolio projects
+  const getImageUrl = (item, isThumbnail = true) => {
+    // If it's a thumbnail and thumbnailUrl exists, return it
+    if (isThumbnail && item.thumbnailUrl) {
+      // Check if it's already a URL
+      if (item.thumbnailUrl.startsWith('http')) {
+        console.log('Returning thumbnail URL:', item.thumbnailUrl);
+        return item.thumbnailUrl;
+      }
+      
+      // If it's a file ID, construct the Appwrite URL
+      const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1";
+      const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID;
+      const bucketId = import.meta.env.VITE_APPWRITE_BUCKET_ID || import.meta.env.VITE_APPWRITE_PORTFOLIO_BUCKET_ID;
+      
+      if (bucketId && projectId && item.thumbnailUrl) {
+        return `${endpoint}/storage/buckets/${bucketId}/files/${item.thumbnailUrl}/view?project=${projectId}`;
+      }
+    }
+    
+    // Fallback based on category
+    const category = item.category?.toLowerCase() || '';
+    
+    if (category.includes('wedding')) {
+      return "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+    }
+    
+    if (category.includes('portrait') || category.includes('photo')) {
+      return "https://images.unsplash.com/photo-1554080353-a576cf803bda?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+    }
+    
+    if (category.includes('commercial') || category.includes('business')) {
+      return "https://images.unsplash.com/photo-1464822759844-d62ea2ef67f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+    }
+    
+    if (category.includes('video') || category.includes('videography')) {
+      return "https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+    }
+    
+    // Default fallback
+    return "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+  };
+
+  // Process images array from Appwrite
+  const getProjectImages = (project) => {
+    if (project.images && Array.isArray(project.images) && project.images.length > 0) {
+      return project.images.map(img => {
+        // If image is already a URL
+        if (img.startsWith('http')) {
+          return img;
+        }
+        
+        // If it's a file ID, construct the Appwrite URL
+        const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1";
+        const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID;
+        const bucketId = import.meta.env.VITE_APPWRITE_BUCKET_ID || import.meta.env.VITE_APPWRITE_PORTFOLIO_BUCKET_ID;
+        
+        if (bucketId && projectId && img) {
+          return `${endpoint}/storage/buckets/${bucketId}/files/${img}/view?project=${projectId}`;
+        }
+        
+        return img;
+      });
+    }
+    
+    // Return default images if no images array
+    return [
+      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+      "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+      "https://images.unsplash.com/photo-1520854221256-17463ccb8b9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+    ];
+  };
 
   // Photographer Data - UPDATED WITH REAL CERTIFICATE INFO
   const photographer = {
@@ -92,52 +191,6 @@ const Owner3DPortfolio = () => {
         issuer: "K. Ganesh, Director & Faculty, Adobe Certified Professional"
       }
     }
-  ];
-
-  // Portfolio Projects with multiple images
-  const portfolioProjects = [
-    {
-      id: 1,
-      title: "Sarah & James Wedding",
-      category: "wedding",
-      description: "A beautiful outdoor wedding ceremony captured with cinematic elegance",
-      thumbnail: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      featured: true,
-      images: [
-        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1520854221256-17463ccb8b9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-      ]
-    },
-    {
-      id: 2,
-      title: "Corporate Headshots",
-      category: "portrait",
-      description: "Professional headshots for TechStart Inc's executive team",
-      thumbnail: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      featured: false,
-      images: [
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-      ]
-    },
-    {
-      id: 3,
-      title: "Luxury Watch Campaign",
-      category: "commercial",
-      description: "Product photography for ChronoLux Watches",
-      thumbnail: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      featured: true,
-      images: [
-        "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1490367532201-b9bc1dc483f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-      ]
-    },
   ];
 
   // Skills and Specialties
@@ -205,6 +258,8 @@ const Owner3DPortfolio = () => {
   }, [selectedProject, selectedCertificate]);
 
   useEffect(() => {
+    if (loading || !projects.length) return;
+    
     // Check if elements exist before animating
     const elements = [];
     
@@ -312,7 +367,21 @@ const Owner3DPortfolio = () => {
       });
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, []); // Empty dependency array - runs once on mount
+  }, [loading, projects]);
+
+  // Get unique categories for filter buttons
+  const categories = ['all', ...new Set(projects.map(p => p.category?.toLowerCase()).filter(Boolean))];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white pt-20 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 text-yellow-400 animate-spin mx-auto mb-4" />
+          <p className="text-gray-300">Loading portfolio...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white pt-20">
@@ -418,7 +487,7 @@ const Owner3DPortfolio = () => {
               {/* Stats Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
                 {[
-                  { label: 'Projects', value: '500+', icon: '📸' },
+                  { label: 'Projects', value: `${projects.length}+`, icon: '📸' },
                   { label: 'Clients', value: '150+', icon: '👥' },
                   { label: 'Experience', value: '8+ Years', icon: '⭐' },
                   { label: 'Awards', value: '25+', icon: '🏆' }
@@ -660,7 +729,7 @@ const Owner3DPortfolio = () => {
 
           {/* Filter Buttons */}
           <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {['all', 'wedding', 'portrait', 'commercial'].map((filter) => (
+            {categories.map((filter) => (
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
@@ -670,88 +739,127 @@ const Owner3DPortfolio = () => {
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
-                {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                {filter === 'all' ? 'All' : filter.charAt(0).toUpperCase() + filter.slice(1)}
               </button>
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {portfolioProjects
-              .filter(project => activeFilter === 'all' || project.category === activeFilter)
-              .map((project, index) => (
-                <div
-                  key={project.id}
-                  ref={el => projectsRef.current[index] = el}
-                  onClick={() => openLightbox(project)}
-                  className="group relative overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 hover:scale-[1.02]"
-                >
-                  {project.featured && (
-                    <div className="absolute top-6 left-6 z-10 bg-linear-to-r from-yellow-400 to-orange-500 text-black px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                      Featured
-                    </div>
-                  )}
+          {error ? (
+            <div className="text-center py-12">
+              <p className="text-red-400 mb-4">Error: {error}</p>
+              <button 
+                onClick={() => window.location.reload()}
+                className="bg-yellow-500 text-black px-6 py-2 rounded-lg"
+              >
+                Retry
+              </button>
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-400">No portfolio projects found.</p>
+              <p className="text-gray-500 text-sm mt-2">
+                Add projects to your Appwrite portfolio collection.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects
+                .filter(project => activeFilter === 'all' || project.category?.toLowerCase() === activeFilter)
+                .map((project, index) => {
+                  const projectImages = getProjectImages(project);
+                  const thumbnailUrl = getImageUrl(project, true);
                   
-                  {/* Main Image */}
-                  <div className="relative h-80 overflow-hidden">
-                    <img
-                      src={project.thumbnail}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent" />
-                    
-                    {/* Project Info */}
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <span className="inline-block px-4 py-1 bg-black/60 backdrop-blur-sm text-yellow-400 text-sm font-semibold rounded-full mb-3">
-                        {project.category.toUpperCase()}
-                      </span>
-                      <h3 className="text-white text-xl font-bold mb-2">{project.title}</h3>
-                      <p className="text-gray-300 text-sm">{project.description}</p>
+                  return (
+                    <div
+                      key={project.$id || index}
+                      ref={el => projectsRef.current[index] = el}
+                      onClick={() => openLightbox({ ...project, images: projectImages })}
+                      className="group relative overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 hover:scale-[1.02]"
+                    >
+                      {project.isFeatured && (
+                        <div className="absolute top-6 left-6 z-10 bg-linear-to-r from-yellow-400 to-orange-500 text-black px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                          Featured
+                        </div>
+                      )}
                       
-                      {/* Image Count */}
-                      <div className="flex items-center mt-4">
-                        <div className="flex -space-x-2">
-                          {project.images.slice(0, 3).map((img, idx) => (
-                            <div key={idx} className="w-8 h-8 rounded-full border-2 border-black overflow-hidden">
-                              <img 
-                                src={img.replace('w=1920', 'w=100')} 
-                                alt="" 
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ))}
-                          {project.images.length > 3 && (
-                            <div className="w-8 h-8 rounded-full bg-black/80 border-2 border-black flex items-center justify-center">
-                              <span className="text-white text-xs font-bold">
-                                +{project.images.length - 3}
+                      {/* Main Image */}
+                      <div className="relative h-80 overflow-hidden">
+                        <img
+                          src={thumbnailUrl}
+                          alt={project.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          onError={(e) => {
+                            console.error('Failed to load thumbnail:', thumbnailUrl);
+                            e.target.src = "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+                          }}
+                        />
+                        
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent" />
+                        
+                        {/* Project Info */}
+                        <div className="absolute bottom-0 left-0 right-0 p-6">
+                          {project.category && (
+                            <span className="inline-block px-4 py-1 bg-black/60 backdrop-blur-sm text-yellow-400 text-sm font-semibold rounded-full mb-3">
+                              {project.category.toUpperCase()}
+                            </span>
+                          )}
+                          <h3 className="text-white text-xl font-bold mb-2">
+                            {project.title || 'Untitled Project'}
+                          </h3>
+                          <p className="text-gray-300 text-sm">
+                            {project.description || 'No description available'}
+                          </p>
+                          
+                          {/* Image Count */}
+                          {projectImages.length > 0 && (
+                            <div className="flex items-center mt-4">
+                              <div className="flex -space-x-2">
+                                {projectImages.slice(0, 3).map((img, idx) => (
+                                  <div key={idx} className="w-8 h-8 rounded-full border-2 border-black overflow-hidden">
+                                    <img 
+                                      src={img} 
+                                      alt="" 
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        e.target.src = "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80";
+                                      }}
+                                    />
+                                  </div>
+                                ))}
+                                {projectImages.length > 3 && (
+                                  <div className="w-8 h-8 rounded-full bg-black/80 border-2 border-black flex items-center justify-center">
+                                    <span className="text-white text-xs font-bold">
+                                      +{projectImages.length - 3}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                              <span className="text-gray-400 text-sm ml-3">
+                                {projectImages.length} photo{projectImages.length !== 1 ? 's' : ''}
                               </span>
                             </div>
                           )}
                         </div>
-                        <span className="text-gray-400 text-sm ml-3">
-                          {project.images.length} photos
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto">
-                          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                          </svg>
+                        
+                        {/* Hover Overlay */}
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto">
+                              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                              </svg>
+                            </div>
+                            <p className="text-white text-lg font-semibold">View Gallery</p>
+                            <p className="text-gray-300 text-sm">Click to explore</p>
+                          </div>
                         </div>
-                        <p className="text-white text-lg font-semibold">View Gallery</p>
-                        <p className="text-gray-300 text-sm">Click to explore</p>
                       </div>
                     </div>
-                  </div>
-                </div>
-              ))}
-          </div>
+                  );
+                })}
+            </div>
+          )}
         </div>
       </section>
 
@@ -803,9 +911,14 @@ const Owner3DPortfolio = () => {
           {/* Project Info */}
           <div className="text-center mb-8 max-w-3xl">
             <h3 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              {selectedProject.title}
+              {selectedProject.title || 'Project'}
             </h3>
             <p className="text-gray-300 text-lg">{selectedProject.description}</p>
+            {selectedProject.category && (
+              <span className="inline-block mt-3 px-4 py-1 bg-yellow-400/20 text-yellow-400 rounded-full text-sm">
+                {selectedProject.category}
+              </span>
+            )}
           </div>
 
           {/* Main Swiper Container */}
@@ -825,6 +938,9 @@ const Owner3DPortfolio = () => {
                       src={image}
                       alt={`${selectedProject.title} - ${index + 1}`}
                       className="max-w-full max-h-full object-contain"
+                      onError={(e) => {
+                        e.target.src = "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80";
+                      }}
                     />
                   </div>
                 </SwiperSlide>
